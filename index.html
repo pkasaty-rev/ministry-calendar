@@ -4,89 +4,453 @@
 <meta charset="UTF-8">
 <title>Ministry Planning Calendar — Christ Lincoln</title>
 <style>
-:root {
-    --navy: #003e52;
-    --teal: #00a19c;
-    --green: #a3d55f;
-    --orange: #d7842c;
-    --bg: #f7f6f2;
-    --ink: #1a1a1a;
-    --muted: #5f5f5f;
-    --border: rgba(0, 62, 82, 0.12);
-}
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 16px; line-height: 1.5; }
-.wrap { max-width: 780px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
-header { border-bottom: 1px solid var(--border); padding-bottom: 1.2rem; margin-bottom: 1.5rem; }
-h1 { margin: 0 0 0.25rem; font-size: 28px; color: var(--navy); font-weight: 600; }
-.sub { color: var(--muted); font-size: 14px; }
-.stamp { display: inline-block; background: white; border: 1px solid var(--border);
-    border-radius: 999px; padding: 6px 14px; font-size: 13px; color: var(--navy);
-    margin-top: 0.75rem; }
-.stamp .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-    background: var(--teal); margin-right: 8px; vertical-align: middle; }
-.advisory { background: #fdf3e3; border: 1px solid #f0c989; border-left: 5px solid var(--orange);
-    border-radius: 12px; padding: 1rem 1.2rem; margin: 1.25rem 0;
-    font-size: 15px; line-height: 1.55; color: #5a3d10; }
-.advisory strong { color: var(--orange); font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.04em; font-size: 14px; display: block; margin-bottom: 4px; }
-.views { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 1.5rem 0; }
-@media (max-width: 640px) { .views { grid-template-columns: 1fr; } }
-.view-card { background: white; border: 1px solid var(--border); border-radius: 12px;
-    padding: 1.25rem; text-decoration: none; color: inherit; display: block;
-    transition: transform 0.1s, box-shadow 0.1s; }
-.view-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,62,82,0.08);
-    border-color: var(--teal); }
-.view-card h2 { margin: 0 0 0.5rem; font-size: 17px; color: var(--navy); }
-.view-card p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
-.view-card .open { display: inline-block; margin-top: 0.75rem; font-size: 12px;
-    color: var(--teal); font-weight: 600; letter-spacing: 0.02em; }
-.stats { display: flex; gap: 1.5rem; margin: 1.5rem 0; padding: 1rem 1.25rem;
-    background: white; border: 1px solid var(--border); border-radius: 12px;
-    font-size: 13px; color: var(--muted); }
-.stats strong { color: var(--navy); font-weight: 600; font-size: 18px;
-    display: block; margin-bottom: 2px; }
-footer { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border);
-    font-size: 12px; color: var(--muted); line-height: 1.6; }
-footer a { color: var(--teal); }
-</style>
+    :root {
+        --navy: #003e52;
+        --teal: #00a19c;
+        --green: #a3d55f;
+        --orange: #d7842c;
+        --yellow: #dfcd63;
+        --gray: #b2b2b2;
+        --surface: #ffffff;
+        --bg: #f7f6f2;
+        --ink: #1a1a1a;
+        --muted: #5f5f5f;
+        --border: rgba(0, 62, 82, 0.12);
+        --border-strong: rgba(0, 62, 82, 0.28);
+        --radius: 12px;
+        --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 15px; line-height: 1.5; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    header.page { display: flex; justify-content: space-between; align-items: baseline;
+        margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.9rem; }
+    header.page h1 { margin: 0; font-size: 22px; color: var(--navy); font-weight: 600; }
+    header.page .sub { font-size: 13px; color: var(--muted); }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: 1rem 1.15rem; margin-bottom: 1rem; }
+    .card h2 { margin: 0 0 0.75rem 0; font-size: 15px; color: var(--navy); font-weight: 600; }
+    .card .hint { font-size: 12px; color: var(--muted); }
+
+    /* Filter rail */
+    .filters { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 12px;
+        background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: 0.9rem 1rem; margin-bottom: 1rem; }
+    .filters label { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase;
+        letter-spacing: 0.04em; margin-bottom: 4px; }
+    .filters input[type=text], .filters select { width: 100%; padding: 6px 8px; font-size: 13px;
+        border: 1px solid var(--border); border-radius: 6px; background: white; color: var(--ink);
+        font-family: inherit; }
+    .filters select[multiple] { min-height: 32px; padding: 4px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .chip { font-size: 11px; padding: 3px 9px; border-radius: 12px; border: 1px solid var(--border);
+        background: white; cursor: pointer; user-select: none; color: var(--ink); }
+    .chip.active { background: var(--navy); color: white; border-color: var(--navy); }
+
+    /* Event list */
+    .month-group { margin-bottom: 1.25rem; }
+    .month-head { font-size: 14px; font-weight: 600; color: var(--navy); margin: 0.9rem 0 0.5rem;
+        border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+    .event { display: grid; grid-template-columns: 150px 1fr 140px; gap: 14px;
+        padding: 10px 12px; border-radius: var(--radius-sm); margin-bottom: 4px; align-items: start;
+        border-left: 4px solid var(--gray); background: white; }
+    .event .date { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .event .date .tbd { display: inline-block; background: #fef3d3; color: #8a6d19;
+        font-size: 10px; padding: 1px 6px; border-radius: 8px; margin-left: 4px; }
+    .event .name { font-size: 14px; color: var(--ink); }
+    .event .areas { margin-top: 3px; display: flex; flex-wrap: wrap; gap: 4px; }
+    .event .areas .tag { font-size: 10px; padding: 1px 7px; border-radius: 10px;
+        background: #eef2f3; color: #3a4a50; }
+    .event .owner { font-size: 11px; color: var(--muted); text-align: right; }
+    .event .owner .swatch { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+        margin-right: 5px; vertical-align: middle; }
+    .changelog { font-size: 11px; color: var(--muted); font-style: italic; margin-top: 4px; }
+
+    /* Advisory banner */
+    .advisory { background: #fdf3e3; border: 1px solid #f0c989; border-left: 5px solid var(--orange);
+        border-radius: var(--radius); padding: 0.9rem 1.1rem; margin-bottom: 1.1rem;
+        font-size: 14px; line-height: 1.55; color: #5a3d10; }
+    .advisory strong { color: var(--orange); font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.04em; font-size: 13px; display: block; margin-bottom: 3px; }
+
+    /* Empty / footer */
+    .empty { text-align: center; padding: 2rem; color: var(--muted); font-size: 13px; }
+    footer.page { margin-top: 2rem; font-size: 11px; color: var(--muted); text-align: center;
+        border-top: 1px solid var(--border); padding-top: 1rem; }
+    
+    /* Horizon strip */
+    .horizon { padding: 1.25rem 1.25rem 0.9rem; }
+    .horizon-scale { display: flex; justify-content: space-between; font-size: 11px;
+        color: var(--muted); margin-bottom: 10px; font-variant-numeric: tabular-nums; }
+    .horizon-grid { display: grid; gap: 6px; margin-bottom: 14px; align-items: end;
+        min-height: 80px; }
+    .horizon-week { display: flex; flex-direction: column; align-items: center; gap: 3px;
+        min-height: 80px; justify-content: flex-end; padding: 6px 2px; border-radius: 6px;
+        cursor: pointer; transition: background 0.1s; }
+    .horizon-week:hover { background: rgba(0, 62, 82, 0.06); }
+    .horizon-week.active { background: rgba(0, 161, 156, 0.15); }
+    .horizon-week .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .horizon-week .wklabel { font-size: 9px; color: var(--muted); margin-top: 4px; }
+    .horizon-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--muted);
+        padding-top: 10px; border-top: 1px solid var(--border); }
+    .horizon-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .horizon-legend .swatch { width: 10px; height: 10px; border-radius: 50%; }
+    .horizon-nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .hnav-btn { font-size: 11px; padding: 4px 10px; border: 1px solid var(--border);
+        background: white; border-radius: 6px; cursor: pointer; color: var(--ink);
+        font-family: inherit; line-height: 1.2; }
+    .hnav-btn:hover { background: rgba(0, 62, 82, 0.06); border-color: var(--border-strong); }
+    </style>
 </head>
 <body>
 <div class="wrap">
-    <header>
+    <header class="page">
         <h1>Ministry Planning Calendar</h1>
-        <div class="sub">Christ Lincoln · FY 2026-27 · the immovable dates the exec and pastoral team plan around.</div>
-        <div class="stamp"><span class="dot"></span>Last updated Tuesday, May 19, 2026 at 12:43 PM CDT</div>
+        <div class="sub">Christ Lincoln · FY 2026-27 · last updated Tuesday, May 19, 2026 at 12:55 PM CDT</div>
     </header>
-
     <div class="advisory"><strong>Major events only</strong>Always check the Google Calendar and ministry area for latest changes and other events.</div>
-
-    <div class="stats">
-        <div><strong>119</strong>events on the calendar</div>
-        <div><strong>78</strong>confirmed</div>
-        <div><strong>41</strong>TBD</div>
+    
+    <div class="card horizon">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:12px;flex-wrap:wrap;">
+            <h2 id="horizonTitle" style="margin:0;">Horizon</h2>
+            <div class="horizon-nav">
+                <span id="horizonCaption" style="font-size:11px;color:var(--muted);">Click a week to isolate it</span>
+                <button id="horizonPrev" class="hnav-btn" title="Step backward 4 weeks" aria-label="Previous">◀</button>
+                <button id="horizonReset" class="hnav-btn" title="Reset to default window">Reset</button>
+                <button id="horizonNext" class="hnav-btn" title="Step forward 4 weeks" aria-label="Next">▶</button>
+            </div>
+        </div>
+        <div class="horizon-scale" id="horizonScale"></div>
+        <div class="horizon-grid" id="horizonGrid"></div>
+        <div class="horizon-legend" id="horizonLegend"></div>
     </div>
-
-    <div class="views">
-        <a class="view-card" href="exec-calendar-v1-A.html">
-            <h2>Horizon View</h2>
-            <p>Thirteen-week rolling horizon strip plus the full event list with filters. Best for looking ahead and isolating a week.</p>
-            <span class="open">Open horizon view →</span>
-        </a>
-        <a class="view-card" href="exec-calendar-v1-BC.html">
-            <h2>Windowed View</h2>
-            <p>This month, next month, later, plus cross-cutting events at a glance. Best for a quick read on what's coming up.</p>
-            <span class="open">Open windowed view →</span>
-        </a>
+    
+    
+    <div class="filters">
+        <div>
+            <label>Search</label>
+            <input type="text" id="fSearch" placeholder="Event, owner, area…">
+        </div>
+        <div>
+            <label>Window</label>
+            <select id="fWindow">
+                <option value="all" selected>All (FY 26-27)</option>
+                <option value="30">Next 30 days</option>
+                <option value="90">Next 90 days</option>
+                <option value="fy">This fiscal year</option>
+                <option value="tbd">TBD only</option>
+                <option value="past30">Past 30 days</option>
+            </select>
+        </div>
+        <div>
+            <label>Status</label>
+            <select id="fStatus">
+                <option value="all" selected>All</option>
+                <option value="confirmed">Confirmed only</option>
+                <option value="tbd">TBD only</option>
+            </select>
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+            <button id="fClear" style="width:100%;padding:6px 10px;font-size:13px;border:1px solid var(--border);background:white;border-radius:6px;cursor:pointer;color:var(--ink);font-family:inherit;">Clear filters</button>
+        </div>
     </div>
-
-    <footer>
-        Source of truth is the 2026-27 Ministry Calendar spreadsheet, maintained by Paul Kasaty.
-        Refreshes are published from that spreadsheet — bookmark this page and refresh to see the latest.
-        Questions or additions: <a href="mailto:pkasaty@christlincoln.org">pkasaty@christlincoln.org</a>.
+    <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;">Filter by owner</div>
+        </div>
+        <div class="chips" id="ownerChips"></div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin:10px 0 4px;">Filter by ministry area</div>
+        <div class="chips" id="areaChips"></div>
+    </div>
+    
+    
+    <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.75rem;">
+            <h2 style="margin:0;">Events</h2>
+            <span id="resultCount" style="font-size:12px;color:var(--muted);"></span>
+        </div>
+        <div id="eventList"></div>
+    </div>
+    
+    <footer class="page">
+        Spreadsheet is source of truth. Last updated Tuesday, May 19, 2026 at 12:55 PM CDT.
     </footer>
 </div>
+<script>
+
+const OWNER_COLORS = {"Exec Team": "#003e52", "Worship": "#00a19c", "Family Ministries": "#a3d55f", "Schools": "#d7842c", "Elementary School": "#dfcd63", "Child Care": "#e8a96b", "Finance & Generosity": "#5ea845", "SEDOM": "#a34586", "Pastoral Team": "#006269", "Connections": "#7fb8b4", "Engagement": "#b2b2b2"};
+const DEFAULT_COLOR = "#b2b2b2";
+const EVENTS = [{"month": "July 2026", "start_date": "2026-07-01", "start_str": "Wed, Jul 01, 2026", "end_date": "2026-07-14", "end_str": "Tue, Jul 14, 2026", "status": "Confirmed", "owner": "Finance & Generosity", "areas": [], "event": "Year End for AP - No Vacation or Make Alternate Arrangement", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "July 2026", "start_date": "2026-07-04", "start_str": "Sat, Jul 04, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Exec Team", "areas": [], "event": "Independence Day (Observed 3rd)", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "July 2026", "start_date": "2026-07-05", "start_str": "Sun, Jul 05, 2026", "end_date": "2026-07-11", "end_str": "Sat, Jul 11, 2026", "status": "Confirmed", "owner": "Family Ministries", "areas": [], "event": "High School Ministry South Dakota Mission Trip", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "July 2026", "start_date": "2026-07-13", "start_str": "Mon, Jul 13, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Pastoral Team", "areas": [], "event": "Pastors Unavailable, Circuit Pastors' Meeting, 12pm to 1pm", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "July 2026", "start_date": "2026-07-18", "start_str": "Sat, Jul 18, 2026", "end_date": "2026-07-23", "end_str": "Thu, Jul 23, 2026", "status": "Confirmed", "owner": "SEDOM", "areas": [], "event": "LCMS National Convention", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "August 2026", "start_date": "2026-08-03", "start_str": "Mon, Aug 03, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Teachers Report", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "August 2026", "start_date": "2026-08-03", "start_str": "Mon, Aug 03, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Exec Team", "areas": ["All Staff"], "event": "All Staff Launch pt. 1 (Blackout for Vacations)", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "August 2026", "start_date": "2026-08-05", "start_str": "Wed, Aug 05, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Family Ministries", "areas": ["Family Ministries"], "event": "Volunteer Leader Training, all ages", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "August 2026", "start_date": "2026-08-09", "start_str": "Sun, Aug 09, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": [], "event": "Prayer for teachers and students returning to school (Elementary, CC, other teachers)", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "August 2026", "start_date": "2026-08-10", "start_str": "Mon, Aug 10, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Pastoral Team", "areas": [], "event": "Pastors Unavailable, Circuit Pastors' Meeting, 10am to 1pm", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "August 2026", "start_date": "2026-08-11", "start_str": "Tue, Aug 11, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Back to School Night", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "August 2026", "start_date": "2026-08-16", "start_str": "Sun, Aug 16, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Family Ministries", "areas": ["Family Ministries", "Worship"], "event": "First day of Sunday School/Bible Study & Blessing of Volunteer Leaders in Worship", "change_log": "", "source": "", "is_tbd": false, "is_multi": true}, {"month": "August 2026", "start_date": "2026-08-16", "start_str": "Sun, Aug 16, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "“Dirty Jobs” (working title) all-campus series launch", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "August 2026", "start_date": "2026-08-19", "start_str": "Wed, Aug 19, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "2nd Grade Gift of the Word Ceremony", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "August 2026", "start_date": "2026-08-19", "start_str": "Wed, Aug 19, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Family Ministries", "areas": ["Family Ministries"], "event": "MSM/HSM Parent/Student Launches", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "August 2026", "start_date": "2026-08-23", "start_str": "Sun, Aug 23, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Family Ministries", "areas": ["Family Ministries"], "event": "6th Grade Confirmation Retreat", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Wed, Aug 26, 2026", "start_date": "2026-08-30", "start_str": "Sun, Aug 30, 2026", "end_date": "2026-09-01", "end_str": "Tue, Sep 01, 2026", "status": "Confirmed", "owner": "Family Ministries", "areas": [], "event": "NE District DCE Retreat", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "September 2026", "start_date": "2026-09-07", "start_str": "Mon, Sep 07, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Exec Team", "areas": [], "event": "Labor Day, campuses closed", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "September 2026", "start_date": "2026-09-14", "start_str": "Mon, Sep 14, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Pastoral Team", "areas": [], "event": "Pastors Unavailable, Circuit Pastors' Meeting, 10am to 1pm", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "September 2026", "start_date": "2026-09-18", "start_str": "Fri, Sep 18, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Schools", "areas": ["Elementary School", "Child Care"], "event": "Schools Closed, Comp Day", "change_log": "", "source": "", "is_tbd": false, "is_multi": true}, {"month": "Sun, Sep 20, 2026", "start_date": "2026-09-23", "start_str": "Wed, Sep 23, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "See You At the Pole", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Sun, Sep 20, 2026", "start_date": "", "start_str": "September (TBD), 2026", "end_date": "", "end_str": "", "status": "TBD", "owner": "Worship", "areas": [], "event": "??? - Night of Praise", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "October 2026", "start_date": "2026-10-16", "start_str": "Fri, Oct 16, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Schools", "areas": ["Elementary School", "Child Care"], "event": "Schools Closed, Professional Development", "change_log": "", "source": "", "is_tbd": false, "is_multi": true}, {"month": "October 2026", "start_date": "2026-10-19", "start_str": "Mon, Oct 19, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Elementary Closed, Professional Development", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "October 2026", "start_date": "2026-10-25", "start_str": "Sun, Oct 25, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Reformation Sunday", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "October 2026", "start_date": "", "start_str": "October (TBD), 2026", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "October - Exec Retreat", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "October 2026", "start_date": "", "start_str": "October (TBD), 2026", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "TBD - Exec Report Out", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "October 2026", "start_date": "", "start_str": "October (TBD), 2026", "end_date": "", "end_str": "", "status": "TBD", "owner": "Pastoral Team", "areas": [], "event": "District Fall Pastors’ Conference", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "October 2026", "start_date": "", "start_str": "October (TBD), 2026", "end_date": "", "end_str": "", "status": "TBD", "owner": "Family Ministries", "areas": [], "event": "Fam Min Fall Speaker", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "October 2026", "start_date": "", "start_str": "October (TBD), 2026", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "Launch of Position Requisition window", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "October (TBD), 2026", "start_date": "", "start_str": "October (TBD), 2026", "end_date": "", "end_str": "", "status": "TBD", "owner": "Worship", "areas": [], "event": "YH Campaign commitment Sunday (unknown date/details as of January ‘26)", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "October (TBD), 2026", "start_date": "", "start_str": "October (TBD), 2026", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "Groundbreaking for Making Room", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "November 2026", "start_date": "2026-11-01", "start_str": "Sun, Nov 01, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "All Saints Day", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "November 2026", "start_date": "2026-11-06", "start_str": "Fri, Nov 06, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Elementary Closed, Professional Development", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "November 2026", "start_date": "2026-11-08", "start_str": "Sun, Nov 08, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Family Ministries", "areas": ["Family Ministries"], "event": "Confirmation Day (Date awaiting Halfsy date release)", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "November 2026", "start_date": "2026-11-09", "start_str": "Mon, Nov 09, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Pastoral Team", "areas": [], "event": "Pastors Unavailable, Circuit Pastors' Meeting, 10am to 1pm", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "November 2026", "start_date": "2026-11-13", "start_str": "Fri, Nov 13, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Schools", "areas": ["Child Care", "Elementary School"], "event": "Dinner and Auction", "change_log": "", "source": "", "is_tbd": false, "is_multi": true}, {"month": "November 2026", "start_date": "2026-11-20", "start_str": "Fri, Nov 20, 2026", "end_date": "2026-11-22", "end_str": "Sun, Nov 22, 2026", "status": "Confirmed", "owner": "Family Ministries", "areas": [], "event": "NE District High School Youth Gathering", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "November 2026", "start_date": "2026-11-22", "start_str": "Sun, Nov 22, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Church Triumphant video in Worship", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "November 2026", "start_date": "2026-11-24", "start_str": "Tue, Nov 24, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Grandparents Day", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "November 2026", "start_date": "2026-11-25", "start_str": "Wed, Nov 25, 2026", "end_date": "2026-11-26", "end_str": "Thu, Nov 26, 2026", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Thanksgiving Worship Services", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "November 2026", "start_date": "2026-11-25", "start_str": "Wed, Nov 25, 2026", "end_date": "2026-11-27", "end_str": "Fri, Nov 27, 2026", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Elementary Closed, Thanksgiving Break", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Wed, Nov 25, 2026", "start_date": "2026-11-29", "start_str": "Sun, Nov 29, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "First Sunday in Advent", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Wed, Nov 25, 2026", "start_date": "", "start_str": "November (TBD), 2026", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "Open Enrollment :-)", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Wed, Nov 25, 2026", "start_date": "", "start_str": "November (TBD), 2026", "end_date": "", "end_str": "", "status": "TBD", "owner": "Family Ministries", "areas": [], "event": "MSM District Gathering", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "December 2026", "start_date": "2026-12-02", "start_str": "Wed, Dec 02, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Wednesday Night Advent Worship Services", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "December 2026", "start_date": "2026-12-03", "start_str": "Thu, Dec 03, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Child Care", "areas": ["Sumner Campus", "Child Care"], "event": "CC Family Advent Celebration, 0.1875", "change_log": "", "source": "", "is_tbd": false, "is_multi": true}, {"month": "December 2026", "start_date": "2026-12-09", "start_str": "Wed, Dec 09, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Wednesday Night Advent Worship Services", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "December 2026", "start_date": "2026-12-13", "start_str": "Sun, Dec 13, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Family Ministries", "areas": ["Family Ministries"], "event": "Children's Christmas Program – Paul, Mark, Maria to take offline and discuss seating capacity, or Advent services as an idea", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "December 2026", "start_date": "2026-12-14", "start_str": "Mon, Dec 14, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Pastoral Team", "areas": [], "event": "Pastors Unavailable, Circuit Pastors' Meeting, 12pm to 1pm", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "December 2026", "start_date": "2026-12-15", "start_str": "Tue, Dec 15, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Elementary Christmas Program", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "December 2026", "start_date": "2026-12-16", "start_str": "Wed, Dec 16, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Wednesday Night Christmas Choral Service", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "December 2026", "start_date": "2026-12-21", "start_str": "Mon, Dec 21, 2026", "end_date": "2026-12-31", "end_str": "Thu, Dec 31, 2026", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Elementary Christmas Break", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "December 2026", "start_date": "2026-12-24", "start_str": "Thu, Dec 24, 2026", "end_date": "2026-12-25", "end_str": "Fri, Dec 25, 2026", "status": "Confirmed", "owner": "Child Care", "areas": ["Child Care"], "event": "CC Christmas Break", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "December 2026", "start_date": "2026-12-24", "start_str": "Thu, Dec 24, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Christmas Eve Worship Services", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Fri, Dec 25, 2026", "start_date": "2026-12-25", "start_str": "Fri, Dec 25, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Christmas Day Caroling", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Fri, Dec 25, 2026", "start_date": "2026-12-31", "start_str": "Thu, Dec 31, 2026", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Child Care", "areas": ["Child Care"], "event": "CC Early Close @ 3pm", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Fri, Dec 25, 2026", "start_date": "", "start_str": "December (TBD), 2026", "end_date": "", "end_str": "", "status": "TBD", "owner": "Child Care", "areas": ["Yankee Hill Campus", "Child Care"], "event": "CC YH Family Advent Celebration", "change_log": "", "source": "", "is_tbd": true, "is_multi": true}, {"month": "Fri, Dec 25, 2026", "start_date": "", "start_str": "December (TBD), 2026", "end_date": "", "end_str": "", "status": "TBD", "owner": "Finance & Generosity", "areas": [], "event": "Position Requisition Review & Determination of Budget Priorities", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "January 2027", "start_date": "2027-01-01", "start_str": "Fri, Jan 01, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Schools", "areas": ["Child Care", "Elementary School"], "event": "Schools Closed", "change_log": "", "source": "", "is_tbd": false, "is_multi": true}, {"month": "January 2027", "start_date": "2027-01-04", "start_str": "Mon, Jan 04, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Schools", "areas": ["Child Care", "Elementary School"], "event": "Schools Closed", "change_log": "", "source": "", "is_tbd": false, "is_multi": true}, {"month": "January 2027", "start_date": "2027-01-11", "start_str": "Mon, Jan 11, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Pastoral Team", "areas": [], "event": "Pastors Unavailable, Circuit Pastors' Meeting, 10am to 1pm", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Mon, Jan 18, 2027", "start_date": "2027-01-24", "start_str": "Sun, Jan 24, 2027", "end_date": "2027-01-30", "end_str": "Sat, Jan 30, 2027", "status": "Confirmed", "owner": "Schools", "areas": ["Elementary School", "Child Care", "Worship"], "event": "National Lutheran Schools Week (CC, Elementary, Church) (check dates on elementary calendar)", "change_log": "", "source": "", "is_tbd": false, "is_multi": true}, {"month": "Mon, Jan 18, 2027", "start_date": "", "start_str": "January (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "TBD - Exec Retreat", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Mon, Jan 18, 2027", "start_date": "", "start_str": "January (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "TBD - Exec Report Out", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Mon, Jan 18, 2027", "start_date": "", "start_str": "January (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "Staff Holiday Party", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Mon, Jan 18, 2027", "start_date": "", "start_str": "January (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Finance & Generosity", "areas": [], "event": "Budget Kickoff Meeting (all budget managers)", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "February 2027", "start_date": "2027-02-05", "start_str": "Fri, Feb 05, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Elementary Closed, Teacher Comp Day", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "February 2027", "start_date": "2027-02-08", "start_str": "Mon, Feb 08, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Pastoral Team", "areas": [], "event": "Pastors Unavailable, Circuit Pastors' Meeting, 10am to 1pm", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "February 2027", "start_date": "2027-02-10", "start_str": "Wed, Feb 10, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Ash Wednesday, Beginning of Lent. Per Eckelkamp: no staff meetings.", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "February 2027", "start_date": "2027-02-12", "start_str": "Fri, Feb 12, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Professional Development", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Fri, Feb 12, 2027", "start_date": "2027-02-15", "start_str": "Mon, Feb 15, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Elementary Closed for Presidents Day", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Fri, Feb 12, 2027", "start_date": "", "start_str": "February (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Engagement", "areas": [], "event": "Best Practices - come back to this and school closure dates once we have the date.", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Fri, Feb 12, 2027", "start_date": "", "start_str": "February (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Finance & Generosity", "areas": [], "event": "TBD - Financial Town Hall", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Fri, Feb 12, 2027", "start_date": "", "start_str": "February (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "SEDOM", "areas": [], "event": "TBD - Quarterly Pastoral Retreat", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Fri, Feb 12, 2027", "start_date": "", "start_str": "February (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Finance & Generosity", "areas": [], "event": "Budgets Due in Martus", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Fri, Feb 12, 2027", "start_date": "", "start_str": "February (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "Budget Binders completed & shared with Exec Team", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "March 2027", "start_date": "2027-03-08", "start_str": "Mon, Mar 08, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Pastoral Team", "areas": [], "event": "Pastors Unavailable, Circuit Pastors' Meeting, 10am to 1pm", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "March 2027", "start_date": "2027-03-11", "start_str": "Thu, Mar 11, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Streams Open House", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "March 2027", "start_date": "2027-03-12", "start_str": "Fri, Mar 12, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Schools", "areas": ["Child Care", "Elementary School"], "event": "Schools Closed, Staff Development", "change_log": "", "source": "", "is_tbd": false, "is_multi": true}, {"month": "March 2027", "start_date": "2027-03-21", "start_str": "Sun, Mar 21, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Palm Sunday, Start of Holy Week", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "March 2027", "start_date": "2027-03-25", "start_str": "Thu, Mar 25, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Maundy Thursday Worship Services, Early Communion", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "March 2027", "start_date": "2027-03-25", "start_str": "Thu, Mar 25, 2027", "end_date": "2027-03-29", "end_str": "Mon, Mar 29, 2027", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Elementary Closed for Easter Break", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "March 2027", "start_date": "2027-03-26", "start_str": "Fri, Mar 26, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Good Friday Worship Services", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Fri, Mar 26, 2027", "start_date": "2027-03-28", "start_str": "Sun, Mar 28, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Easter Sunday", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Fri, Mar 26, 2027", "start_date": "", "start_str": "March (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "Deadline for Exec team to meet with direct reports to better understand their budgets", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Fri, Mar 26, 2027", "start_date": "", "start_str": "March (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "Deadline for budget managers to request mtg with Exec Team to discuss their budget", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Fri, Mar 26, 2027", "start_date": "", "start_str": "March (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "Budget Review (Exec team, all day)", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Fri, Mar 26, 2027", "start_date": "", "start_str": "March (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "Budget managers present to exec (half day)", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Fri, Mar 26, 2027", "start_date": "", "start_str": "March (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Finance & Generosity", "areas": [], "event": "Make budget revisions", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Fri, Mar 26, 2027", "start_date": "", "start_str": "March (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "Exec team half-day review of FOC/LLB feedback", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "April 2027", "start_date": "2027-04-01", "start_str": "Thu, Apr 01, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship", "Sumner Campus"], "event": "Lake Country Lutheran HS Band Concert (Sanctuary)", "change_log": "", "source": "", "is_tbd": false, "is_multi": true}, {"month": "April 2027", "start_date": "2027-04-12", "start_str": "Mon, Apr 12, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Pastoral Team", "areas": [], "event": "Pastors Unavailable, Circuit Pastors' Meeting, 10am to 1pm", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "April 2027", "start_date": "", "start_str": "April (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Finance & Generosity", "areas": [], "event": "Implement and communicate budget changes based on LLB/FOC feedback", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "April 2027", "start_date": "", "start_str": "April (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Pastoral Team", "areas": [], "event": "Spring Pastors’ Conference", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "April 2027", "start_date": "", "start_str": "April (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "Final exec team review of budget", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "April 2027", "start_date": "", "start_str": "April (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Family Ministries", "areas": [], "event": "HSM Senior Celebration", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "April 2027", "start_date": "", "start_str": "April (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "TBD - Quarterly Exec Retreat", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "April 2027", "start_date": "", "start_str": "April (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "TBD - Exec Report Out", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "May 2027", "start_date": "2027-05-01", "start_str": "Sat, May 01, 2027", "end_date": "2027-05-31", "end_str": "Mon, May 31, 2027", "status": "Confirmed", "owner": "Finance & Generosity", "areas": [], "event": "(all month) - Project Generosity", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "May 2027", "start_date": "2027-05-04", "start_str": "Tue, May 04, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Spring Concert", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "May 2027", "start_date": "2027-05-05", "start_str": "Wed, May 05, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Family Ministries", "areas": ["Family Ministries"], "event": "Last Day of Wed Programming", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "May 2027", "start_date": "2027-05-09", "start_str": "Sun, May 09, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Family Ministries", "areas": ["Family Ministries"], "event": "Last Sunday School/Bible Study", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "May 2027", "start_date": "2027-05-10", "start_str": "Mon, May 10, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Pastoral Team", "areas": [], "event": "Pastors Unavailable, Circuit Pastors' Meeting, 10am to 1pm", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Wed, May 12, 2027", "start_date": "2027-05-13", "start_str": "Thu, May 13, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Last day of school", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Wed, May 12, 2027", "start_date": "2027-05-14", "start_str": "Fri, May 14, 2027", "end_date": "2027-05-21", "end_str": "Fri, May 21, 2027", "status": "Confirmed", "owner": "Elementary School", "areas": ["Elementary School"], "event": "Teacher Work Days", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Wed, May 12, 2027", "start_date": "2027-05-16", "start_str": "Sun, May 16, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Pentecost", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Wed, May 12, 2027", "start_date": "2027-05-23", "start_str": "Sun, May 23, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Worship", "areas": ["Worship"], "event": "Trinity Sunday", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Wed, May 12, 2027", "start_date": "2027-05-31", "start_str": "Mon, May 31, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Exec Team", "areas": [], "event": "Memorial Day, Campuses Closed", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "Wed, May 12, 2027", "start_date": "", "start_str": "May (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "SEDOM", "areas": [], "event": "TBD - Quarterly Pastoral Retreat", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Wed, May 12, 2027", "start_date": "", "start_str": "May (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Family Ministries", "areas": [], "event": "8th Grade Confirmation Retreat", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Wed, May 12, 2027", "start_date": "", "start_str": "May (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Schools", "areas": [], "event": "TBD: YH CC Pre-K Promotion", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "Wed, May 12, 2027", "start_date": "", "start_str": "May (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Exec Team", "areas": [], "event": "Communicate raises to staff & post new positions", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "June 2027", "start_date": "2027-06-14", "start_str": "Mon, Jun 14, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Pastoral Team", "areas": [], "event": "Pastors Unavailable, Circuit Pastors' Meeting, 12pm to 1pm", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "June 2027", "start_date": "2027-06-15", "start_str": "Tue, Jun 15, 2027", "end_date": "", "end_str": "", "status": "Confirmed", "owner": "Finance & Generosity", "areas": [], "event": "Avoid vacations last two weeks of fiscal year (Anyone with vacations that cannot be moved should make alternate arrangements", "change_log": "", "source": "", "is_tbd": false, "is_multi": false}, {"month": "June 2027", "start_date": "", "start_str": "June (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Family Ministries", "areas": [], "event": "VBS (Sumner Campus)", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "June 2027", "start_date": "", "start_str": "June (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Family Ministries", "areas": [], "event": "VBS (YH Campus)", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "June 2027", "start_date": "", "start_str": "June (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Schools", "areas": [], "event": "SUM and YH CC 4th of July Celebration", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}, {"month": "June 2027", "start_date": "", "start_str": "June (TBD), 2027", "end_date": "", "end_str": "", "status": "TBD", "owner": "Schools", "areas": [], "event": "YH CC Father's Day Open House", "change_log": "", "source": "", "is_tbd": true, "is_multi": false}];
+const TODAY = new Date();
+
+function safeColor(owner) { return OWNER_COLORS[owner] || DEFAULT_COLOR; }
+function esc(s) { return String(s || "").replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function ownerList() {
+    const s = new Set();
+    EVENTS.forEach(e => e.owner && s.add(e.owner));
+    return Array.from(s).sort();
+}
+function areaList() {
+    const s = new Set();
+    EVENTS.forEach(e => (e.areas || []).forEach(a => s.add(a)));
+    return Array.from(s).sort();
+}
+
+function getFilters() {
+    const owners = Array.from(document.querySelectorAll('.chip.owner-chip.active')).map(c => c.dataset.value);
+    const areas = Array.from(document.querySelectorAll('.chip.area-chip.active')).map(c => c.dataset.value);
+    const status = document.getElementById('fStatus').value;
+    const q = document.getElementById('fSearch').value.trim().toLowerCase();
+    const win = document.getElementById('fWindow').value;
+    return { owners, areas, status, q, win };
+}
+
+function withinWindow(e, win) {
+    if (win === 'all') return true;
+    if (!e.start_date) return win === 'tbd' || win === 'all';
+    const d = new Date(e.start_date + 'T00:00:00');
+    const days = (d - TODAY) / (1000 * 60 * 60 * 24);
+    if (win === 'past30') return days >= -30 && days < 0;
+    if (win === '30') return days >= 0 && days <= 30;
+    if (win === '90') return days >= 0 && days <= 90;
+    if (win === 'fy') return d >= new Date('2026-07-01') && d <= new Date('2027-06-30');
+    if (win === 'tbd') return e.is_tbd;
+    return true;
+}
+
+function filterEvents(overrideWeek) {
+    const f = getFilters();
+    return EVENTS.filter(e => {
+        if (f.owners.length && !f.owners.includes(e.owner)) return false;
+        if (f.areas.length && !(e.areas || []).some(a => f.areas.includes(a))) return false;
+        if (f.status === 'confirmed' && e.status !== 'Confirmed') return false;
+        if (f.status === 'tbd' && !e.is_tbd) return false;
+        if (f.q && !((e.event + ' ' + e.owner + ' ' + (e.areas||[]).join(' ')).toLowerCase().includes(f.q))) return false;
+        if (!withinWindow(e, f.win)) return false;
+        if (overrideWeek !== undefined && overrideWeek !== null) {
+            if (!e.start_date) return false;
+            const anchor = window.__weekAnchor || TODAY;
+            const d = new Date(e.start_date + 'T00:00:00');
+            const days = (d - anchor) / (1000 * 60 * 60 * 24);
+            const week = Math.floor(days / 7);
+            if (week !== overrideWeek) return false;
+        }
+        return true;
+    });
+}
+
+function weekRangeLabel(weekIdx) {
+    const anchor = window.__weekAnchor || TODAY;
+    const start = new Date(anchor); start.setDate(start.getDate() + weekIdx * 7);
+    const end = new Date(start); end.setDate(end.getDate() + 6);
+    const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return `${fmt(start)} – ${fmt(end)}`;
+}
+
+function renderList(overrideWeek) {
+    const list = filterEvents(overrideWeek);
+    const target = document.getElementById('eventList');
+    if (!list.length) {
+        const msg = (overrideWeek !== undefined && overrideWeek !== null)
+            ? `Week of ${weekRangeLabel(overrideWeek)} — no events match the active filters.`
+            : 'No events match these filters.';
+        target.innerHTML = `<div class="empty">${esc(msg)}</div>`;
+        document.getElementById('resultCount').textContent = '0 events';
+        return;
+    }
+    // Group by month in spreadsheet order
+    const months = [];
+    const byMonth = {};
+    list.forEach(e => {
+        const m = e.month || 'Unscheduled';
+        if (!(m in byMonth)) { byMonth[m] = []; months.push(m); }
+        byMonth[m].push(e);
+    });
+    let html = '';
+    months.forEach(m => {
+        html += `<div class="month-group"><div class="month-head">${esc(m)}</div>`;
+        byMonth[m].forEach(e => {
+            const c = safeColor(e.owner);
+            const tbd = e.is_tbd ? '<span class="tbd">TBD</span>' : '';
+            const dateDisp = e.start_str + (e.end_str ? ' → ' + e.end_str : '');
+            const areas = (e.areas || []).map(a => `<span class="tag">${esc(a)}</span>`).join('');
+            const cl = e.change_log ? `<div class="changelog">${esc(e.change_log)}</div>` : '';
+            html += `
+                <div class="event" style="border-left-color: ${c};">
+                    <div class="date">${esc(dateDisp)}${tbd}</div>
+                    <div>
+                        <div class="name">${esc(e.event)}</div>
+                        <div class="areas">${areas}</div>
+                        ${cl}
+                    </div>
+                    <div class="owner"><span class="swatch" style="background:${c};"></span>${esc(e.owner || '—')}</div>
+                </div>`;
+        });
+        html += '</div>';
+    });
+    target.innerHTML = html;
+    document.getElementById('resultCount').textContent = `${list.length} event${list.length === 1 ? '' : 's'}`;
+}
+
+function renderFilterChips() {
+    const oWrap = document.getElementById('ownerChips');
+    const aWrap = document.getElementById('areaChips');
+    oWrap.innerHTML = ownerList().map(o =>
+        `<span class="chip owner-chip" data-value="${esc(o)}"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${safeColor(o)};margin-right:5px;vertical-align:middle;"></span>${esc(o)}</span>`
+    ).join('');
+    aWrap.innerHTML = areaList().map(a =>
+        `<span class="chip area-chip" data-value="${esc(a)}">${esc(a)}</span>`
+    ).join('');
+    [oWrap, aWrap].forEach(wrap => {
+        wrap.querySelectorAll('.chip').forEach(c => {
+            c.addEventListener('click', () => { c.classList.toggle('active'); refresh(); });
+        });
+    });
+}
+
+function refresh() { renderList(window.__activeWeek); }
+
+function installFilterListeners() {
+    ['fSearch', 'fStatus', 'fWindow'].forEach(id => {
+        document.getElementById(id).addEventListener('input', refresh);
+        document.getElementById(id).addEventListener('change', refresh);
+    });
+    document.getElementById('fClear').addEventListener('click', () => {
+        document.getElementById('fSearch').value = '';
+        document.getElementById('fStatus').value = 'all';
+        document.getElementById('fWindow').value = 'all';
+        document.querySelectorAll('.chip.active').forEach(c => c.classList.remove('active'));
+        window.__activeWeek = null;
+        document.querySelectorAll('.horizon-week.active').forEach(w => w.classList.remove('active'));
+        refresh();
+    });
+}
+
+
+// Determine the default anchor — today, unless today is before the fiscal year, in which case FY start.
+const FY_START = new Date('2026-07-01T00:00:00');
+const HORIZON_ANCHOR = TODAY < FY_START ? FY_START : TODAY;
+const HORIZON_WEEKS = 13;
+const HORIZON_STEP_WEEKS = 4;
+const MS_PER_DAY = 86400000;
+
+window.__weekAnchor = HORIZON_ANCHOR;
+
+function renderHorizon() {
+    const weeks = HORIZON_WEEKS;
+    const anchor = window.__weekAnchor;
+    const cols = new Array(weeks).fill(null).map(() => ({}));
+    EVENTS.forEach(e => {
+        if (!e.start_date) return;
+        const d = new Date(e.start_date + 'T00:00:00');
+        const days = (d - anchor) / (1000 * 60 * 60 * 24);
+        if (days < 0 || days > weeks * 7) return;
+        const wk = Math.floor(days / 7);
+        if (wk < 0 || wk >= weeks) return;
+        cols[wk][e.owner] = (cols[wk][e.owner] || 0) + 1;
+    });
+    const offsetDays = Math.round((anchor - HORIZON_ANCHOR) / MS_PER_DAY);
+    const todayColIdx = Math.floor((TODAY - anchor) / (MS_PER_DAY * 7));
+    const grid = document.getElementById('horizonGrid');
+    grid.style.gridTemplateColumns = `repeat(${weeks}, 1fr)`;
+    grid.innerHTML = cols.map((wk, i) => {
+        const dots = Object.entries(wk).flatMap(([owner, n]) =>
+            new Array(n).fill(0).map(() =>
+                `<div class="dot" style="background:${safeColor(owner)};" title="${esc(owner)}"></div>`)
+        ).join('');
+        const wkNum = i - todayColIdx;
+        const wkLabel = wkNum >= 0 ? `+${wkNum}W` : `${wkNum}W`;
+        return `<div class="horizon-week" data-week="${i}">${dots}<div class="wklabel">${wkLabel}</div></div>`;
+    }).join('');
+    // Scale labels — anchored to the current window
+    const scale = document.getElementById('horizonScale');
+    const fmt = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    scale.innerHTML = [0, 3, 6, 9, 12].map(wk => {
+        const d = new Date(anchor); d.setDate(d.getDate() + wk * 7);
+        return `<span>${fmt(d)}</span>`;
+    }).join('');
+    // Title — day-range relative to the default anchor
+    const titleEl = document.getElementById('horizonTitle');
+    if (titleEl) {
+        const startOffset = offsetDays;
+        const endOffset = offsetDays + 90;
+        let titleText;
+        if (startOffset === 0) {
+            titleText = 'Horizon · 0-90 days';
+        } else if (startOffset > 0) {
+            titleText = `Horizon · ${startOffset}-${endOffset} days out`;
+        } else if (endOffset < 0) {
+            titleText = `Horizon · ${Math.abs(endOffset)}-${Math.abs(startOffset)} days back`;
+        } else {
+            titleText = `Horizon · ${Math.abs(startOffset)} days back to ${endOffset} days out`;
+        }
+        titleEl.textContent = titleText;
+    }
+    // Caption — explicit date range of current window
+    const startD = new Date(anchor);
+    const endD = new Date(anchor); endD.setDate(endD.getDate() + weeks * 7 - 1);
+    const cap = document.getElementById('horizonCaption');
+    if (cap) {
+        const sameYear = startD.getFullYear() === endD.getFullYear();
+        const fmtNoYear = d => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+        const fmtWithYear = d => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        cap.textContent = sameYear
+            ? `${fmtNoYear(startD)} - ${fmtWithYear(endD)}`
+            : `${fmtWithYear(startD)} - ${fmtWithYear(endD)}`;
+    }
+    // Click handlers (week selection)
+    grid.querySelectorAll('.horizon-week').forEach(wk => {
+        wk.addEventListener('click', () => {
+            const wknum = parseInt(wk.dataset.week);
+            if (wk.classList.contains('active')) {
+                wk.classList.remove('active');
+                window.__activeWeek = null;
+            } else {
+                grid.querySelectorAll('.horizon-week').forEach(w => w.classList.remove('active'));
+                wk.classList.add('active');
+                window.__activeWeek = wknum;
+            }
+            refresh();
+        });
+    });
+    // Legend
+    const owners = ownerList();
+    document.getElementById('horizonLegend').innerHTML = owners.map(o =>
+        `<span><span class="swatch" style="background:${safeColor(o)};"></span>${esc(o)}</span>`).join('');
+}
+
+function shiftHorizon(weekDelta) {
+    const next = new Date(window.__weekAnchor);
+    next.setDate(next.getDate() + weekDelta * 7);
+    window.__weekAnchor = next;
+    window.__activeWeek = null;  // selection is anchor-relative; invalidate on shift
+    renderHorizon();
+    refresh();
+}
+
+function resetHorizon() {
+    window.__weekAnchor = HORIZON_ANCHOR;
+    window.__activeWeek = null;
+    renderHorizon();
+    refresh();
+}
+
+function installHorizonNav() {
+    document.getElementById('horizonPrev').addEventListener('click', () => shiftHorizon(-HORIZON_STEP_WEEKS));
+    document.getElementById('horizonNext').addEventListener('click', () => shiftHorizon(HORIZON_STEP_WEEKS));
+    document.getElementById('horizonReset').addEventListener('click', resetHorizon);
+}
+
+window.__activeWeek = null;
+renderHorizon();
+installHorizonNav();
+renderFilterChips();
+installFilterListeners();
+renderList();
+</script>
 </body>
 </html>
