@@ -20,9 +20,7 @@ how fresh the data is.
 
 ## Files
 
-- `index.html` — landing page with links to the two views and a freshness stamp
-- `exec-calendar-v1-A.html` — horizon view (rolling 13-week strip + full list)
-- `exec-calendar-v1-BC.html` — windowed view (this month / next month / later)
+- `index.html` — the Horizon View (rolling 13-week strip + full event list with filters, Major-Events-Only advisory banner, and a "Last updated" timestamp in Central time).
 
 ## Updating
 
